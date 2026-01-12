@@ -1,4 +1,5 @@
-# ML-Based Equity Strategy with Regime-Aware Leverage
+# Trading SPY Using Machine Learning and Leverage
+
 
 This repo contains a small research project where I test a machine-learning–based trading strategy on SPY.  
 The idea is to use a simple classifier to adjust market exposure, rather than trying to predict prices directly.
