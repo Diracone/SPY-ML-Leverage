@@ -1,64 +1,65 @@
 # ML-Based Equity Strategy with Regime-Aware Leverage
 
-This repository contains a research-oriented implementation of an equity trading strategy for SPY, based on a Random Forest classifier combined with a drawdown-aware leverage overlay.
+This repo contains a small research project where I test a machine-learning–based trading strategy on SPY.  
+The idea is to use a simple classifier to adjust market exposure, rather than trying to predict prices directly.
 
-The goal is not short-term price prediction, but to study whether simple machine-learning signals can be used to **modulate exposure** in a statistically controlled way under realistic, out-of-sample conditions.
+The focus is on clean out-of-sample testing and understanding when (and why) the strategy works.
 
 ---
 
-## Overview
+## Idea
 
-The strategy follows three basic principles:
+The strategy is built around three points:
 
-- Remain fully invested (1.0× exposure) by default.
-- Use a probabilistic ML model to estimate short-horizon directionality.
-- Increase exposure selectively during drawdowns when a rebound appears likely.
+- Stay fully invested most of the time (1.0× exposure).
+- Use an ML model to estimate the probability of the market going up the next day.
+- Add leverage only during drawdowns, when a rebound looks more likely.
 
-All results are evaluated using strict walk-forward validation to avoid look-ahead bias.
+Everything is tested using walk-forward validation to avoid look-ahead bias.
 
 ---
 
 ## Data
 
-- Instrument: SPY (daily OHLCV)
+- Asset: SPY (daily data)
 - Source: Yahoo Finance
-- Time span configurable via `START_DATE` / `END_DATE`
+- Date range controlled in the script
 
-Prices are transformed into returns and normalized features to reduce non-stationarity.
+Prices are converted to returns and normalized features to reduce non-stationarity.
 
 ---
 
 ## Features
 
-The model uses the following inputs:
+The model uses a small set of intuitive indicators:
 
-- Momentum indicators (RSI(14), ROC(10), ROC(30)), compressed into a single PCA factor
-- 20-day realized volatility, z-scored per training window
-- Distance from the 50-day moving average, z-scored
-- Drawdown from a rolling 1-year peak (used as a regime indicator)
+- Momentum: RSI(14), ROC(10), ROC(30), compressed into one PCA factor
+- Volatility: 20-day realized volatility (z-scored per training window)
+- Trend: distance from the 50-day moving average
+- Drawdown: distance from the rolling 1-year peak
 
-All feature transformations are fit on training data only within each walk-forward split.
+All transformations are fit on training data only in each walk-forward split.
 
 ---
 
 ## Model
 
 - Random Forest classifier (scikit-learn)
-- Conservative depth and leaf-size constraints
-- Target: sign of next-day log return
+- Conservative settings to limit overfitting
+- Target: whether the next day’s return is positive
 
-The model output is interpreted as a probability, not a trading signal by itself.
+The output is treated as a probability, not a hard trading signal.
 
 ---
 
-## Exposure Logic
+## Exposure and Leverage
 
 - Base exposure is always 1.0× (fully invested).
-- Additional leverage is applied only when:
+- Extra leverage is added only when:
   - The market is in a drawdown, and
-  - The model assigns a sufficiently high probability to an upward move.
+  - The model assigns a high probability to an upward move.
 
-Exposure is capped and transaction costs are applied when exposure changes.
+Total exposure is capped, and simple transaction costs are applied when exposure changes.
 
 ---
 
@@ -66,19 +67,20 @@ Exposure is capped and transaction costs are applied when exposure changes.
 
 - Walk-forward cross-validation using `TimeSeriesSplit`
 - Metrics reported per fold:
-  - Train and test accuracy
+  - Train vs test accuracy
   - Sharpe ratio
   - Maximum drawdown
   - Average exposure
   - Fraction of leveraged days
 
-An aggregated out-of-sample equity curve is constructed across all folds.
+Out-of-sample equity curves are stitched together across folds.
 
 ---
 
 ## Output
 
-The script prints fold-level diagnostics and a summary across folds, including feature importance averaged over time. This allows inspection of both predictive stability and regime dependence.
+The script prints fold-level diagnostics and an average summary across folds, including feature importance.  
+This makes it easy to see whether performance is stable across time or driven by specific regimes.
 
 ---
 
