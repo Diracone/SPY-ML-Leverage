@@ -20,6 +20,16 @@ Everything is tested using walk-forward validation to avoid look-ahead bias.
 
 ---
 
+## Example Results
+
+**Out-of-sample equity curve**
+![Equity Curve](figures/equity_curve_oos.png)
+
+**Model-driven exposure over time**
+![Exposure](figures/exposure_oos.png)
+
+---
+
 ## Data
 
 - Asset: SPY (daily data)
