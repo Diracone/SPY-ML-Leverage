@@ -20,6 +20,16 @@ Everything is tested using walk-forward validation to avoid look-ahead bias.
 
 ---
 
+## Example Results
+
+**Out-of-sample equity curve**
+![Equity Curve](figures/equity_curve_oos.png)
+
+**Model-driven exposure over time**
+![Exposure](figures/exposure_oos.png)
+
+---
+
 ## Data
 
 - Asset: SPY (daily data)
@@ -84,13 +94,6 @@ The script prints fold-level diagnostics and an average summary across folds, in
 This makes it easy to see whether performance is stable across time or driven by specific regimes.
 
 ---
-## Example Results
-
-**Out-of-sample equity curve**
-![Equity Curve](figures/equity_curve_oos.png)
-
-**Model-driven exposure over time**
-![Exposure](figures/exposure_oos.png)
 
 ## Dependencies
 
