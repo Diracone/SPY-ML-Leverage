@@ -1,0 +1,11 @@
+# Data & outputs (never commit)
+data/
+outputs/
+
+# Python junk
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
