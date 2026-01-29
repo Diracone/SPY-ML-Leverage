@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: spy-ml-backtest
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: backtest
+          image: spy-ml-leverage:latest
+          imagePullPolicy: Never
+          args:
+            - "--ticker"
+            - "SPY"
+            - "--start"
+            - "2016-01-01"
+            - "--end"
+            - "2020-01-01"
