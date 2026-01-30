@@ -116,6 +116,16 @@ The goal is to treat the strategy as a small **production-style research pipelin
 
 ---
 
+## Cloud Execution (AWS)
+
+The trading pipeline can be executed as a batch job on AWS:
+
+- **EC2** is used as the compute layer to run the Dockerized backtest
+- **S3** stores output artifacts (metrics, plots) independently of compute
+- **IAM** provides scoped programmatic access for secure uploads
+
+This mirrors a typical batch ML / ETL workflow and maps directly to Kubernetes or EKS for larger-scale runs.
+
 ## Dependencies
 
 ```bash
