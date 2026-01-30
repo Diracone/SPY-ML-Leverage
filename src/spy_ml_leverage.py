@@ -38,23 +38,6 @@ def fetch_prices(ticker: str, start: str, end: str, raw_dir: Path) -> pd.DataFra
     print("Downloading data from yfinance...")
     df = yf.download(ticker, start=start, end=end, auto_adjust=False, progress=False)
     df = df.dropna()
-
-        # --------------------------------------------------------
-    # CI / sanity-check guard
-    # --------------------------------------------------------
-    # In CI or very short date ranges, we may not have enough
-    # data for walk-forward validation. In that case, exit
-    # early instead of failing the pipeline.
-    MIN_ROWS = 300  # due to 252-day rolling features
-
-    if len(df) < MIN_ROWS:
-        print(
-            f"Not enough data for walk-forward backtest "
-            f"({len(df)} rows < {MIN_ROWS}). "
-            "Exiting early (CI sanity check)."
-        )
-    return
-    
     df.to_parquet(cache_path)
     print(f"Saved cache: {cache_path}")
     return df
@@ -150,6 +133,20 @@ def main():
     # Only keep fields actually used downstream
     df = df[["Open", "High", "Low", "Close", "Volume"]].copy()
 
+    # --------------------------------------------------------
+    # CI / sanity-check guard (CORRECT PLACE)
+    # --------------------------------------------------------
+    MIN_ROWS = 300  # due to 252-day rolling features
+
+    if len(df) < MIN_ROWS:
+        print(
+            f"Not enough data for walk-forward backtest "
+            f"({len(df)} rows < {MIN_ROWS}). "
+            "Exiting early (CI sanity check)."
+        )
+        return
+    # exits main() cleanly
+    
     # ========================================================
     # FEATURE ENGINEERING
     # ========================================================
